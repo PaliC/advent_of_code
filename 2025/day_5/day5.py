@@ -20,8 +20,8 @@ def part_1(file_path: str) -> int:
     ranges.sort(key=lambda x: x[0])
     count = 0
     for number in numbers:
-        for range in ranges:
-            if range[0] <= number <= range[1]:
+        for r in ranges:
+            if r[0] <= number <= r[1]:
                 count += 1
                 break
     return count
@@ -30,13 +30,17 @@ def part_2(file_path: str) -> int:
     ranges, _ = _parse_input(file_path)
     ranges.sort(key=lambda x: x[0])
     ranges = [[range[0], range[1]] for range in ranges]
-    merged_ranges = [ranges[0]]
-    for range in ranges[1:]:
-        if range[0] <= merged_ranges[-1][1]:
-            merged_ranges[-1][1] = max(merged_ranges[-1][1], range[1])
+    current_range = ranges[0]
+    count = 0
+    for i in range(1, len(ranges)):
+        r = ranges[i]
+        if r[0] <= current_range[1]:
+            current_range[1] = max(current_range[1], r[1])
         else:
-            merged_ranges.append(range)
-    return sum(range[1] - range[0] + 1 for range in merged_ranges)
+            count += current_range[1] - current_range[0] + 1
+            current_range = r
+    count += current_range[1] - current_range[0] + 1
+    return count
 
 def main():
     # ranges, numbers = _parse_input(os.path.join(os.path.dirname(__file__), 'test_input.txt'))
